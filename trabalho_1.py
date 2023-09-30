@@ -21,7 +21,7 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS conta_bancaria (
                numero TEXT NOT NULL,
                saldo REAL ,
                gerente INTEGER,
-               titular INTEGER, FOREIGN KEY (titular) REFERENCES pessoa (id)
+               titular INTEGER, FOREIGN KEY (titular) REFERENCES pessoa (id) ON DELETE CASCADE
               
                )''' )
 
@@ -88,17 +88,21 @@ while True:
     
     elif opcao == '4':
         # Deletar
-
+        '''
         id_conta = input("Id para deletar: ")
         cursor.execute('DELETE FROM conta_bancaria WHERE id = ?', (id_conta,))
         conexao.commit()
         print("Dados deletados com sucesso!")
 
         '''
-        cpf = input("Cpf para excluir: ")
-        cursor.execute('DELETE FROM pessoa WHERE cpf = ?', (cpf,))
-        conexao.commit() #salva as alterações
-        print("pessoa removidas com sucesso!")'''
+        id_pessoa = input("Id para excluir: ")
+        conexao.execute('DELETE FROM pessoa WHERE id = ?', (id_pessoa,))
+        
+        # Excluir as contas bancárias associadas ao titular
+        conexao.execute('DELETE FROM conta_bancaria WHERE titular = ?', (id_pessoa,))
+        
+        # Confirmar a transação
+        conexao.commit()
         
 
 
